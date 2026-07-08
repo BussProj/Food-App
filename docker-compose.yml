@@ -1,0 +1,140 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: food-app-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-restaurant_platform}
+      POSTGRES_USER: ${POSTGRES_USER:-platform_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secure_postgres_developer_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - food-app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: food-app-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - food-app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    container_name: food-app-backend
+    command: daphne -b 0.0.0.0 -p 8000 config.asgi:application
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - food-app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health/"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    container_name: food-app-celery-worker
+    command: celery -A config worker --loglevel=info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - food-app-network
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    container_name: food-app-celery-beat
+    command: celery -A config beat --loglevel=info
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      backend:
+        condition: service_healthy
+    networks:
+      - food-app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/frontend.Dockerfile
+    container_name: food-app-frontend
+    command: npm start -- --host 0.0.0.0 --poll 2000
+    volumes:
+      - ./frontend/restaurant-platform:/app
+      - /app/node_modules
+    ports:
+      - "4200:4200"
+    env_file:
+      - .env
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - food-app-network
+
+  proxy:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/nginx.Dockerfile
+    container_name: food-app-proxy
+    ports:
+      - "80:80"
+    depends_on:
+      frontend:
+        condition: service_started
+      backend:
+        condition: service_healthy
+    networks:
+      - food-app-network
+
+networks:
+  food-app-network:
+    name: food-app-network
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: food-app-postgres-data

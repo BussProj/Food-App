@@ -19,3 +19,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 *   Environment variables schema layout template (`.env.example`).
 *   Structured issue templates (bug report, feature requests, tasks) and pull request templates.
 *   Descriptive README guidelines for directories (`assets/`, `backend/`, `database/`, `docs/`, `frontend/`, `infrastructure/`, `scripts/`).
+
+## [0.2.0] - 2026-07-08
+### Added
+*   Unified `docker-compose.yml` orchestrating PostgreSQL, Redis, Django, and Angular containers.
+*   Dockerfiles for backend, frontend, and Nginx reverse proxy service.
+*   Nginx reverse proxy configurations supporting dynamic URL routing and WebSocket upgrades.
+*   Bootstrapped Django 5 codebase under `backend/` using python:3.12-slim base image.
+*   Split settings architecture (`base.py`, `local.py`) using `django-environ` to fetch settings keys.
+*   ASGI Daphne configuration ready for Channels and WS integration.
+*   Celery core application setup mapped to Redis queues and schedules.
+*   Lightweight JSON health check views API (/api/health/) reporting PostgreSQL and Redis connection latency.
+*   Idempotent PowerShell automation scripts (`setup.ps1` and `start.ps1`) for environment bootstrapping.
+
