@@ -1,49 +1,83 @@
-# ==========================
-# Node / Angular
-# ==========================
-**/node_modules/
-**/.angular/
-**/dist/
+# ==========================================
+# GITIGNORE FOR RESTAURANT SaaS PLATFORM
+# ==========================================
+
+# Core Environments & Secrets
+.env
+.env.local
+.env.*.local
+*.env
+!*.env.example
+
+# Python / Django Caches & Virtual Envs
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.venv
+venv/
+ENV/
+env/
+python/
+.pytest_cache/
+.tox/
+.coverage
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+
+# Node.js / Angular
+node_modules/
+/dist/
+/.angular/
+.npm
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# ==========================
-# Python / Django
-# ==========================
-**/__pycache__/
-**/*.pyc
-**/*.pyo
-**/*.pyd
-.env
-.env.*
-venv/
-.venv/
+# Database & SQLite Storage
+*.db
+*.sqlite3
+database/backups/*
+!database/backups/README.md
 
-# ==========================
-# IDE
-# ==========================
-.vscode/settings.json
-.idea/
-
-# ==========================
-# Logs
-# ==========================
-*.log
-
-# ==========================
-# OS
-# ==========================
-Thumbs.db
+# OS / Local Editor Settings
 .DS_Store
-
-# ==========================
-# Coverage
-# ==========================
-coverage/
-
-# ==========================
-# Build
-# ==========================
-build/
-out/
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.idea/
+.project
+.pydevproject
+.settings/
+*.sublime-project
+*.sublime-workspace
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

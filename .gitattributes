@@ -1,0 +1,31 @@
+# Auto detect text files and perform LF normalization on check-in
+* text=auto
+
+# Enforce LF line endings for all code and document files
+*.py text eol=lf
+*.ts text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+.editorconfig text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+
+# Explicitly declare binary files that should not be touched
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+# Set executable bit for shell scripts
+*.sh text eol=lf
